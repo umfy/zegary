@@ -1,0 +1,7 @@
+{
+  "name": "zegary",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
