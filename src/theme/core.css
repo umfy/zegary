@@ -1,0 +1,14 @@
+/* There i'm defining styling of Ion components */
+ion-toolbar {
+  --background: var(--ion-color-success);
+  --color: var(--ion-color-success-contrast);
+}
+
+@media screen and (max-width: 380px) {
+  ion-item {
+    --padding-start: 0px;
+    --padding-end: 0px;
+    --inner-padding-start: 0px;
+    --inner-padding-end: 0px;
+  }
+}
