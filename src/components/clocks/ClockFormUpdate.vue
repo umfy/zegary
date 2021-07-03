@@ -14,22 +14,24 @@
       <ion-thumbnail slot="start">
         <img :src="savedFileImage === null ? '' : savedFileImage.webviewPath" />
       </ion-thumbnail>
-      <ion-button type="button" fill="clear" @click="takePhoto">
+      <ion-button type="button" fill="clear" color='tertiary' @click="takePhoto">
         <ion-icon slot="start" :icon="camera"> </ion-icon>
-        Łap zdjęcie
+        Zrób zdjęcie
       </ion-button>
     </ion-item>
     <div class="ion-text-center">
-      <ion-button @click="addHistoryElement">Dodaj element historii</ion-button>
+      <ion-button color='secondary' @click="addHistoryElement">Dodaj element historii</ion-button>
     </div>
     <ion-item lines="none" v-for="pair in this.enteredHistory" :key="pair.id">
       <display-dates
         :historyPair="pair"
         @delete-pair="deletePair"
         @set-pair="setPair"
+        @move-pair-up='movePairUp'
+        @move-pair-down='movePairDown'
       ></display-dates>
     </ion-item>
-    <ion-button type="submit" expand="block">Zapisz</ion-button>
+    <ion-button type="submit" color='secondary' expand="block">Zapisz</ion-button>
   </form>
 </template>
 
@@ -109,6 +111,22 @@ export default {
     setPair(data) {
       const index = this.enteredHistory.findIndex(el => el.id === data.id);
       this.enteredHistory[index] = data;
+    },
+    movePairDown(id){
+      const index = this.enteredHistory.findIndex(el => el.id === id);
+      if (index < this.enteredHistory.length - 1){
+      const temp = this.enteredHistory[index+1]
+      this.enteredHistory[index+1] = this.enteredHistory[index]
+      this.enteredHistory[index] = temp
+      }
+    },
+    movePairUp(id){
+      const index = this.enteredHistory.findIndex(el => el.id === id);
+      if (index > 0){
+        const temp = this.enteredHistory[index-1]
+        this.enteredHistory[index-1] = this.enteredHistory[index]
+        this.enteredHistory[index] = temp
+      }
     },
     async takePhoto() {
       const photo = await Camera.getPhoto({

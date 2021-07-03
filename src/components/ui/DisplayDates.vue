@@ -1,4 +1,19 @@
 <template>
+<base-dialog :show="deleteDialogVisible" @close="toggleDeleteDialog">
+      <h2>Czy na pewno chcesz usunąć ten wpis?</h2>
+      <template v-slot:actions>
+        <ion-grid>
+          <ion-row>
+            <ion-col class="ion-text-center">
+              <ion-button color='secondary' @click="deletePair">Usuń</ion-button>
+            </ion-col>
+            <ion-col class="ion-text-center">
+              <ion-button color='secondary' @click="toggleDeleteDialog">Cofnij</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </template>
+    </base-dialog>
   <ion-grid>
     <base-card class="smallerMargins">
       <ion-row>
@@ -21,9 +36,21 @@
             month-short-names="Styczeń, Luty, Marzec, Kwiecień, Maj, Czerwiec, Lipiec, Sierpień, Wrzesień, Październik, Listpopad, Grudzień"
           ></ion-datetime>
         </ion-col>
+        </ion-row>
+        <ion-row>
         <ion-col class="ion-text-center">
-          <ion-button @click="deletePair">
-            X
+          <ion-button color='secondary' fill='clear' @click="moveUp">
+            <ion-icon slot='icon-only' :icon='chevronUp'></ion-icon>
+          </ion-button>
+          </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button color='secondary' fill='clear' @click="moveDown">
+            <ion-icon slot='icon-only' :icon='chevronDown'></ion-icon>
+          </ion-button>
+          </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button color='secondary' fill='clear' @click="toggleDeleteDialog">
+            <ion-icon slot='icon-only' :icon='close'></ion-icon>
           </ion-button>
         </ion-col>
       </ion-row>
@@ -32,29 +59,42 @@
 </template>
 
 <script>
-import { IonGrid, IonRow, IonCol, IonDatetime, IonButton } from "@ionic/vue";
+import { IonGrid, IonRow, IonCol, IonDatetime, IonButton, IonIcon, 
+// IonButtons 
+} from "@ionic/vue";
+import {
+  close,
+  chevronUp,
+  chevronDown
+} from "ionicons/icons";
 import BaseCard from "../base/BaseCard.vue";
-// import BaseDialog from "../base/BaseDialog.vue";
+import BaseDialog from "../base/BaseDialog.vue";
 
 export default {
   props: {
     historyPair: Object
   },
-  emits: ["delete-pair", "set-pair"],
+  emits: ["delete-pair", "set-pair", 'move-pair-up', 'move-pair-down'],
   components: {
     BaseCard,
-
     IonGrid,
     IonRow,
     IonCol,
     IonDatetime,
-    IonButton
+    IonButton,
+    IonIcon,
+    BaseDialog
+    // IonButtons
   },
   data() {
     return {
       editDateDialogVisible: false,
       inputStart: this.historyPair.start,
-      inputStop: this.historyPair.stop
+      inputStop: this.historyPair.stop,
+      deleteDialogVisible: false,
+      close,
+      chevronUp,
+      chevronDown
     };
   },
   watch: {
@@ -84,6 +124,15 @@ export default {
   methods: {
     deletePair() {
       this.$emit("delete-pair", this.historyPair.id);
+    },
+    moveUp(){
+      this.$emit('move-pair-up', this.historyPair.id)
+    },
+    moveDown(){
+      this.$emit('move-pair-down', this.historyPair.id)
+    },
+    toggleDeleteDialog(){
+      this.deleteDialogVisible = !this.deleteDialogVisible
     }
   }
 };
@@ -95,3 +144,4 @@ export default {
   margin-bottom: 0.2rem;
 }
 </style>
+

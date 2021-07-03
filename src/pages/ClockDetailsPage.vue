@@ -1,35 +1,65 @@
 <template>
   <base-layout page-default-back-link="/clocks">
-    <base-dialog :show="removeClockDialogVisible" @close="switchClockDialog">
+    <base-dialog :show="removeClockDialogVisible" @close="switchClockDialog('removeClockDialogVisible')">
       <h2>Czy na pewno chcesz usunąć ten zegar?</h2>
       <template v-slot:actions>
         <ion-grid>
           <ion-row>
             <ion-col class="ion-text-center">
-              <ion-button @click="removeClock">Usuń</ion-button>
+              <ion-button color='secondary' @click="removeClock">Usuń</ion-button>
             </ion-col>
             <ion-col class="ion-text-center">
-              <ion-button @click="switchClockDialog">Cofnij</ion-button>
+              <ion-button color='secondary' @click="switchClockDialog('removeClockDialogVisible')">Cofnij</ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>
       </template>
     </base-dialog>
-    <template v-slot:actions-end>
-      <ion-button class="ion-button-margins" @click="startStopClock">
-        <ion-icon
-          v-if="clockIsRunning"
-          slot="icon-only"
-          :icon="stopCircleOutline"
-        ></ion-icon>
-        <ion-icon v-else slot="icon-only" :icon="playCircleOutline"></ion-icon>
-      </ion-button>
-      <ion-button class="ion-button-margins" @click="updateClock">
-        <ion-icon slot="icon-only" :icon="createOutline"></ion-icon>
-      </ion-button>
-      <ion-button class="ion-button-margins" @click="switchClockDialog">
-        <ion-icon slot="icon-only" :icon="trashOutline"></ion-icon>
-      </ion-button>
+    <base-dialog :show="startStopClockDialogVisible" @close="switchClockDialog('startStopClockDialogVisible')">
+      <h2 v-if="clockIsRunning">Czy chcesz zatrzymać ten zegar?</h2>
+      <h2 v-else>Czy chcesz uruchomić ten zegar?</h2>
+      <template v-slot:actions>
+        <ion-grid>
+          <ion-row>
+            <ion-col class="ion-text-center">
+              <ion-button color='secondary' @click="startStopClock">Tak</ion-button>
+            </ion-col>
+            <ion-col class="ion-text-center">
+              <ion-button color='secondary' @click="switchClockDialog('startStopClockDialogVisible')">Nie</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </template>
+    </base-dialog>
+    <template v-slot:actions-title>
+      <ion-grid>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-button @click="switchClockDialog('startStopClockDialogVisible')">
+              <ion-icon
+                v-if="clockIsRunning"
+                slot="icon-only"
+                :icon="stopCircleOutline"
+              ></ion-icon>
+              <ion-icon
+                v-else
+                slot="icon-only"
+                :icon="playCircleOutline"
+              ></ion-icon>
+            </ion-button>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-button @click="updateClock">
+              <ion-icon slot="icon-only" :icon="createOutline"></ion-icon>
+            </ion-button>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-button @click="switchClockDialog('removeClockDialogVisible')">
+              <ion-icon slot="icon-only" :icon="trashOutline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </template>
     <h2 v-if="!loadedClock">
       Nie odnaleziono zegara o takim id: {{ clockId }}
@@ -50,7 +80,7 @@ import {
   stopCircleOutline,
   playCircleOutline,
   trashOutline,
-  createOutline
+  createOutline,
 } from "ionicons/icons";
 import { IonButton, IonIcon, IonGrid, IonRow, IonCol } from "@ionic/vue";
 import BaseDialog from "../components/base/BaseDialog.vue";
@@ -63,7 +93,7 @@ export default {
     IonIcon,
     IonGrid,
     IonRow,
-    IonCol
+    IonCol,
   },
   data() {
     return {
@@ -72,7 +102,8 @@ export default {
       trashOutline,
       createOutline,
       playCircleOutline,
-      removeClockDialogVisible: false
+      removeClockDialogVisible: false,
+      startStopClockDialogVisible: false
     };
   },
   // created() {
@@ -96,20 +127,21 @@ export default {
         return true;
       }
       return false;
-    }
+    },
   },
   methods: {
     removeClock() {
       this.$store.dispatch("removeClock", this.clockId);
       this.$router.replace("/clocks");
     },
-    switchClockDialog() {
-      this.removeClockDialogVisible = !this.removeClockDialogVisible;
+    switchClockDialog(option) {
+      this[option] = !this[option];
     },
     updateClock() {
       this.$router.push(this.$route.path + "/update");
     },
     async startStopClock() {
+      this.startStopClockDialogVisible = false
       // create new empty history with todays date at start
       if (
         this.loadedClock.history === undefined ||
@@ -119,8 +151,8 @@ export default {
           {
             id: new Date().toISOString(),
             start: new Date().toISOString(),
-            stop: ""
-          }
+            stop: "",
+          },
         ];
       } else if (
         this.loadedClock.history[0].start != "" &&
@@ -132,7 +164,7 @@ export default {
         this.loadedClock.history.unshift({
           id: new Date().toISOString(),
           start: new Date().toISOString(),
-          stop: ""
+          stop: "",
         });
       }
       await this.modifyClock(this.loadedClock);
@@ -140,32 +172,7 @@ export default {
     async modifyClock(clockData) {
       const clockDataWithId = { id: this.clockId, ...clockData };
       await this.$store.dispatch("modifyClock", clockDataWithId);
-    }
-  }
+    },
+  },
 };
 </script>
-
-<style scoped>
-.ion-button-margins {
-  margin-right: 3rem !important;
-  margin-left: 3rem !important;
-}
-@media screen and (max-width: 500px) {
-  .ion-button-margins {
-    margin-right: 1rem !important;
-    margin-left: 1rem !important;
-  }
-}
-@media screen and (max-width: 425px) {
-  .ion-button-margins {
-    margin-right: 0.8rem !important;
-    margin-left: 0.8rem !important;
-  }
-}
-@media screen and (max-width: 350px) {
-  .ion-button-margins {
-    margin-right: 0rem !important;
-    margin-left: 0rem !important;
-  }
-}
-</style>

@@ -13,7 +13,7 @@
         </section>
         <menu v-if="!fixed">
           <slot name="actions">
-            <ion-button expand="block" @click="tryClose">Close</ion-button>
+            <ion-button color='secondary' expand="block" @click="tryClose">Close</ion-button>
           </slot>
         </menu>
       </dialog>

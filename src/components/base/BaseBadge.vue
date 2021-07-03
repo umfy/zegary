@@ -18,7 +18,7 @@ export default {
   display: inline-block;
   margin-left: 0.1rem;
   margin-right: 0.1rem;
-  background-color: #3d008d;
+  background-color: #BF3100;
   color: white;
 }
 </style>

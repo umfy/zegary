@@ -9,6 +9,9 @@
           ></ion-back-button>
         </ion-buttons>
         <ion-title>{{ pageTitle }}</ion-title>
+        <ion-buttons>
+          <slot name="actions-title"></slot>
+        </ion-buttons>
         <ion-buttons slot="end">
           <slot name="actions-end"></slot>
         </ion-buttons>
@@ -19,9 +22,27 @@
     </ion-content>
     <ion-footer>
       <ion-toolbar>
-        <ion-button expand="full" @click="presentActionSheet">
-          <ion-icon slot="icon-only" :icon="menuOutline"></ion-icon>
-        </ion-button>
+        <ion-buttons>
+          <ion-grid>
+            <ion-row>
+              <ion-col class="ion-text-center">
+                <ion-button @click="homeLink">
+                  <ion-icon slot="icon-only" :icon="home"></ion-icon>
+                </ion-button>
+              </ion-col>
+              <ion-col class="ion-text-center">
+                <ion-button @click="addClockLink">
+                  <ion-icon slot="icon-only" :icon="addCircle"></ion-icon>
+                </ion-button>
+              </ion-col>
+              <!-- <ion-col class="ion-text-center">
+                <ion-button @click="klik">
+                  <ion-icon slot="icon-only" :icon="settings"></ion-icon>
+                </ion-button>
+              </ion-col> -->
+            </ion-row>
+          </ion-grid>
+        </ion-buttons>
       </ion-toolbar>
     </ion-footer>
   </ion-page>
@@ -37,15 +58,21 @@ import {
   IonBackButton,
   IonButtons,
   IonFooter,
-  actionSheetController,
   IonIcon,
-  IonButton
+  IonButton,
+  IonGrid,
+  IonRow,
+  IonCol,
 } from "@ionic/vue";
-import { caretForwardCircle, close, heart, menuOutline } from "ionicons/icons";
+import {
+  home,
+  addCircle,
+  // settings,
+} from "ionicons/icons";
 export default {
   props: {
     pageTitle: String,
-    pageDefaultBackLink: String
+    pageDefaultBackLink: String,
   },
   components: {
     IonPage,
@@ -57,51 +84,30 @@ export default {
     IonButtons,
     IonFooter,
     IonIcon,
-    IonButton
+    IonButton,
+    IonGrid,
+    IonRow,
+    IonCol,
   },
   data() {
     return {
-      menuOutline
+      home,
+      addCircle,
+      // settings,
     };
   },
+  computed: {},
   methods: {
-    async presentActionSheet() {
-      const actionSheet = await actionSheetController.create({
-        //header: "Albums",
-        // cssClass: "my-custom-class",
-        buttons: [
-          {
-            text: "Lista Zegarów",
-            icon: caretForwardCircle,
-            handler: () => {
-              console.log("Play clicked");
-              this.$router.push("/clocks");
-            }
-          },
-          {
-            text: "Dodaj Nowy",
-            icon: heart,
-            handler: () => {
-              console.log("Favorite clicked");
-              this.$router.push("/clocks/add");
-            }
-          },
-          {
-            text: "Zamknij",
-            icon: close,
-            role: "cancel",
-            handler: () => {
-              console.log("Cancel clicked");
-            }
-          }
-        ]
-      });
-      await actionSheet.present();
-
-      const { role } = await actionSheet.onDidDismiss();
-      console.log("onDidDismiss resolved with role", role);
-    }
-  }
+    klik() {
+      console.log("klik!");
+    },
+    addClockLink() {
+      return this.$router.push("/clocks/add");
+    },
+    homeLink() {
+      return this.$router.push("/clocks");
+    },
+  },
 };
 </script>
 

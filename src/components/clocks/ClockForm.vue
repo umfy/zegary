@@ -17,14 +17,14 @@
             :src="savedFileImage === null ? '' : savedFileImage.webviewPath"
           />
         </ion-thumbnail>
-        <ion-button type="button" fill="clear" @click="takePhoto">
+        <ion-button type="button" color='tertiary' fill="clear" @click="takePhoto">
           <ion-icon slot="start" :icon="camera"> </ion-icon>
-          Łap zdjęcie
+          Zrób zdjęcie
         </ion-button>
       </ion-item>
     </ion-list>
 
-    <ion-button type="submit" expand="block">Zapisz</ion-button>
+    <ion-button type="submit" color='secondary' expand="block">Zapisz</ion-button>
   </form>
 </template>
 
