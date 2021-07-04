@@ -24,7 +24,7 @@
       </ion-item>
     </ion-list>
 
-    <ion-button type="submit" color='secondary' expand="block">Zapisz</ion-button>
+    <ion-button class='margins' type="submit" color='secondary' expand="block">Zapisz</ion-button>
   </form>
 </template>
 
@@ -80,8 +80,10 @@ export default {
     async takePhoto() {
       const photo = await Camera.getPhoto({
         resultType: CameraResultType.Uri,
-        source: CameraSource.Camera,
-        quality: 100
+        source: CameraSource,
+        quality: 100,
+        saveToGallery: true,
+        correctOrientation: false
       });
 
       // this.takenImageUrl = photo.webPath;
@@ -120,3 +122,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.margins{
+  margin-top: 1rem;
+
+}
+</style>

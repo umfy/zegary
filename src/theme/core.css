@@ -4,16 +4,22 @@ ion-toolbar {
   --color: var(--ion-color-primary-contrast);
 }
 
-@media screen and (max-width: 380px) {
+/* @media screen and (max-width: 380px) {
   ion-item {
     --padding-start: 0px;
     --padding-end: 0px;
     --inner-padding-start: 0px;
     --inner-padding-end: 0px;
   }
-}
+} */
 
 /* ion-button {
   --background: var(--ion-color-secondary);
   --color: var(--ion-color-secondary-contrast);
 } */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* dark mode variables go here */
+  }
+}

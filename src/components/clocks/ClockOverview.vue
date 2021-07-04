@@ -5,7 +5,7 @@
     <ion-item lines="none">
       <h3>{{ description }}</h3>
     </ion-item>
-    <h4 class="ion-text-center">
+    <h4 class="ion-text-center marginTop">
       {{ sentence }}
       <base-badge :title="countDays"> </base-badge>
       {{ sentenceDays }}
@@ -96,17 +96,19 @@ export default {
 
 <style scoped>
 h2 {
+  font-size: 1.4rem;
   margin-left: 1.5rem;
 }
 h3 {
   margin-left: 1.5rem;
   margin-right: 1.5rem;
-  color: #424242;
+  color: #666666;
 }
 .marginTop {
   margin-top: 2rem;
 }
 h4 {
+  font-size: 1.2rem;
   color:#BF3100;
 }
 </style>

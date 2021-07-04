@@ -34,16 +34,21 @@
         </ion-grid>
       </ion-buttons>
     </div>
-    <h4>
-      Średni czas chodu wynosi
-      <base-badge :title="avgDays"></base-badge>
-      dni.
-    </h4>
-    <h4>
-      Zegar ten osiągnął rekordowy czas
-      <base-badge :title="maxDays"></base-badge>
-      dni.
-    </h4>
+    <div v-if="hasData">
+      <h4>
+        Średni czas chodu wynosi
+        <base-badge :title="avgDays"></base-badge>
+        dni.
+      </h4>
+      <h4>
+        Zegar ten osiągnął rekordowy czas
+        <base-badge :title="maxDays"></base-badge>
+        dni.
+      </h4>
+    </div>
+    <div v-else>
+      <h4>Brak danych.</h4>
+    </div>
   </base-layout>
 </template>
 
@@ -93,13 +98,19 @@ export default {
       return this.$store.getters.clock(this.clockId);
     },
     labels() {
-      let startDates = [];
+      if (this.clock.history === undefined || this.clock.history.length === 0){
+        return []
+      }
+        let startDates = [];
       for (const pair of this.clock.history) {
         startDates.unshift(pair.start.split("T")[0]);
       }
       return startDates;
     },
     values() {
+      if (this.clock.history === undefined || this.clock.history.length === 0){
+        return []
+      }
       let countDays = [];
       for (const pair of this.clock.history) {
         let start = new Date(pair.start);
@@ -109,13 +120,13 @@ export default {
       return countDays;
     },
     maxDays() {
-      const filteredValues = this.values.filter(el => !Number.isNaN(el))
+      const filteredValues = this.values.filter((el) => !Number.isNaN(el));
       return Math.max(...filteredValues);
     },
-    avgDays(){
-      const filteredValues = this.values.filter(el => !Number.isNaN(el))
-      const reducer = (accumulator, currentValue) => accumulator + currentValue
-      return Math.floor(filteredValues.reduce(reducer) / filteredValues.length)
+    avgDays() {
+      const filteredValues = this.values.filter((el) => !Number.isNaN(el));
+      const reducer = (accumulator, currentValue) => accumulator + currentValue;
+      return Math.floor(filteredValues.reduce(reducer) / filteredValues.length);
     },
     tenLabels() {
       if (this.labels.length > +this.chartSize) {
@@ -134,6 +145,10 @@ export default {
         );
       }
       return this.values;
+    },
+    hasData() {
+      const filteredValues = this.values.filter((el) => !Number.isNaN(el));
+      return filteredValues.length > 0;
     },
   },
   methods: {
@@ -171,9 +186,10 @@ h3 {
   color: #424242;
 }
 h4 {
+  font-size: 1.2rem;  
   margin-left: 1.5rem;
   margin-right: 1.5rem;
-  color: #BF3100;
+  color: #bf3100;
 }
 </style>
 

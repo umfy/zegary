@@ -36,12 +36,16 @@ const store = createStore({
   },
   actions: {
     async addClock(context, clockData) {
+      if(clockData.image == null){
+        clockData['image'] = {filepath: '0000.jpg', webviewPath: "http://localhost/_capacitor_file_/data/user/0/com.rine.www/cache/JPEG_0000.jpg"}
+      }
       const newClock = {
         title: clockData.title,
         image: clockData.image,
         description: clockData.description,
         // history: [{id: ? date ?,  start: null, stop: null }],
       }
+      console.log(newClock, 'newClock')
       // backend here
       const response = await fetch(
         `https://zegary-33e82-default-rtdb.europe-west1.firebasedatabase.app/clocks/.json`,
@@ -122,6 +126,15 @@ const store = createStore({
         }
         clocks.push(clock)
       }
+
+      // for (let item of clocks){
+      //   if (item.history === undefined || item.history.length === 0){
+      //     item['history'] = {start: 0}
+      //   }
+      // }
+      // console.log(clocks)
+      // clocks.sort((a, b) => a.history[0].start  > b.history[0].start )
+
       // console.log('clocks', clocks)
       context.commit('setClocks', clocks)
     },

@@ -106,9 +106,15 @@ export default {
       startStopClockDialogVisible: false
     };
   },
-  // created() {
-  //   console.log("this.loadedClock", this.loadedClock);
-  // },
+  watch:{
+    $route(to){
+      // This prevents displaying the same site when :id params change
+      // https://router.vuejs.org/guide/essentials/dynamic-matching.html#reacting-to-params-changes
+      if(Object.keys(to.params).length){
+        this.clockId = this.$route.params.id
+      }
+    }
+  },
   computed: {
     loadedClock() {
       return this.$store.getters.clock(this.clockId);

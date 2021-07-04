@@ -14,24 +14,34 @@
       <ion-thumbnail slot="start">
         <img :src="savedFileImage === null ? '' : savedFileImage.webviewPath" />
       </ion-thumbnail>
-      <ion-button type="button" fill="clear" color='tertiary' @click="takePhoto">
+      <ion-button
+        type="button"
+        fill="clear"
+        color="tertiary"
+        @click="takePhoto"
+      >
         <ion-icon slot="start" :icon="camera"> </ion-icon>
         Zrób zdjęcie
       </ion-button>
     </ion-item>
+    <ion-button class="margins" type="submit" color="secondary" expand="block"
+      >Zapisz</ion-button
+    >
+    <h2 class="marginTop">Historia Nakręceń:</h2>
     <div class="ion-text-center">
-      <ion-button color='secondary' @click="addHistoryElement">Dodaj element historii</ion-button>
+      <ion-button color="secondary" @click="addHistoryElement"
+        >Dodaj element historii</ion-button
+      >
     </div>
-    <ion-item lines="none" v-for="pair in this.enteredHistory" :key="pair.id">
+    <ion-item lines="none" v-for="pair in enteredHistory" :key="pair.id">
       <display-dates
         :historyPair="pair"
         @delete-pair="deletePair"
         @set-pair="setPair"
-        @move-pair-up='movePairUp'
-        @move-pair-down='movePairDown'
+        @move-pair-up="movePairUp"
+        @move-pair-down="movePairDown"
       ></display-dates>
     </ion-item>
-    <ion-button type="submit" color='secondary' expand="block">Zapisz</ion-button>
   </form>
 </template>
 
@@ -46,7 +56,7 @@ import {
   IonTextarea,
   IonThumbnail,
   IonIcon,
-  IonButton
+  IonButton,
 } from "@ionic/vue";
 import { camera } from "ionicons/icons";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
@@ -60,7 +70,7 @@ defineCustomElements(window);
 
 export default {
   props: {
-    clock: Object
+    clock: Object,
   },
   components: {
     DisplayDates,
@@ -70,7 +80,7 @@ export default {
     IonTextarea,
     IonThumbnail,
     IonIcon,
-    IonButton
+    IonButton,
   },
   data() {
     return {
@@ -78,17 +88,25 @@ export default {
       enteredDescription: this.clock.description,
       savedFileImage: this.clock.image,
       enteredHistory: this.clock.history,
-      camera
+      camera,
     };
   },
   emits: ["modify-clock"],
+  // computed:{
+  //   enteredHistory(){
+  //     if(this.clock.history === undefined || this.clock.history.length === 0){
+  //       return {}
+  //       }
+  //       return this.clock.history
+  //   }
+  // },
   methods: {
     submitForm() {
       const clockData = {
         title: this.enteredTitle,
         image: this.savedFileImage,
         description: this.enteredDescription,
-        history: this.enteredHistory
+        history: this.enteredHistory,
       };
       this.$emit("modify-clock", clockData);
     },
@@ -99,40 +117,43 @@ export default {
       this.enteredHistory.unshift({
         id: new Date().toISOString(),
         start: "",
-        stop: ""
+        stop: "",
       });
       console.log(this.enteredHistory);
       // console.log(typeof this.enteredHistory);
     },
     deletePair(id) {
       // console.log("deleting: ", id);
-      this.enteredHistory = this.enteredHistory.filter(el => el.id !== id);
+      this.enteredHistory = this.enteredHistory.filter((el) => el.id !== id);
     },
     setPair(data) {
-      const index = this.enteredHistory.findIndex(el => el.id === data.id);
+      const index = this.enteredHistory.findIndex((el) => el.id === data.id);
       this.enteredHistory[index] = data;
     },
-    movePairDown(id){
-      const index = this.enteredHistory.findIndex(el => el.id === id);
-      if (index < this.enteredHistory.length - 1){
-      const temp = this.enteredHistory[index+1]
-      this.enteredHistory[index+1] = this.enteredHistory[index]
-      this.enteredHistory[index] = temp
+    movePairDown(id) {
+      const index = this.enteredHistory.findIndex((el) => el.id === id);
+      if (index < this.enteredHistory.length - 1) {
+        const temp = this.enteredHistory[index + 1];
+        this.enteredHistory[index + 1] = this.enteredHistory[index];
+        this.enteredHistory[index] = temp;
       }
     },
-    movePairUp(id){
-      const index = this.enteredHistory.findIndex(el => el.id === id);
-      if (index > 0){
-        const temp = this.enteredHistory[index-1]
-        this.enteredHistory[index-1] = this.enteredHistory[index]
-        this.enteredHistory[index] = temp
+    movePairUp(id) {
+      const index = this.enteredHistory.findIndex((el) => el.id === id);
+      if (index > 0) {
+        const temp = this.enteredHistory[index - 1];
+        this.enteredHistory[index - 1] = this.enteredHistory[index];
+        this.enteredHistory[index] = temp;
       }
     },
     async takePhoto() {
       const photo = await Camera.getPhoto({
         resultType: CameraResultType.Uri,
-        source: CameraSource.Camera,
-        quality: 100
+        source: CameraSource,
+        quality: 100,
+        saveToGallery: true,
+        correctOrientation: false
+
       });
 
       // this.takenImageUrl = photo.webPath;
@@ -140,7 +161,7 @@ export default {
 
       this.savedFileImage = {
         filepath: fileName,
-        webviewPath: photo.webPath
+        webviewPath: photo.webPath,
       };
 
       // save file
@@ -157,7 +178,7 @@ export default {
       await Filesystem.writeFile({
         data: base64,
         path: fileName,
-        directory: Directory.Data
+        directory: Directory.Data,
       });
     },
     async convertBlobToBase64(blob) {
@@ -167,7 +188,19 @@ export default {
         reader.onload = () => resolve(reader.result);
         reader.readAsDataURL(blob);
       });
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style scoped>
+h2 {
+  font-size: 1.4rem;
+  margin-left: 1.5rem;
+}
+
+.margins {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+</style>

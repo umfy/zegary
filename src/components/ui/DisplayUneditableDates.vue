@@ -3,11 +3,11 @@
     <!-- <base-card> -->
     <ion-row>
       <ion-col class="ion-text-center">
-        <h3>{{ start }}</h3>
+        <h4>{{ start }}</h4>
       </ion-col>
-      <ion-col class="ion-text-center"><h3>—</h3></ion-col>
+      <ion-col class="ion-text-center"><h4>—</h4></ion-col>
       <ion-col class="ion-text-center">
-        <h3>{{ stop }}</h3>
+        <h4>{{ stop }}</h4>
       </ion-col>
     </ion-row>
     <!-- </base-card> -->

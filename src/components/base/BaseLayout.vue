@@ -26,12 +26,12 @@
           <ion-grid>
             <ion-row>
               <ion-col class="ion-text-center">
-                <ion-button @click="homeLink">
+                <ion-button router-link="/clocks">
                   <ion-icon slot="icon-only" :icon="home"></ion-icon>
                 </ion-button>
               </ion-col>
               <ion-col class="ion-text-center">
-                <ion-button @click="addClockLink">
+                <ion-button router-link="/clocks/add">
                   <ion-icon slot="icon-only" :icon="addCircle"></ion-icon>
                 </ion-button>
               </ion-col>
@@ -95,18 +95,6 @@ export default {
       addCircle,
       // settings,
     };
-  },
-  computed: {},
-  methods: {
-    klik() {
-      console.log("klik!");
-    },
-    addClockLink() {
-      return this.$router.push("/clocks/add");
-    },
-    homeLink() {
-      return this.$router.push("/clocks");
-    },
   },
 };
 </script>

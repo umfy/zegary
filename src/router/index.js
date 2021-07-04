@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from "@ionic/vue-router";
 import ClocksPage from "../pages/ClocksPage.vue";
+import AddClockPage from "../pages/AddClockPage.vue"
+import UpdateClockPage from "../pages/UpdateClockPage.vue"
+import ClockAnalyticsPage from "../pages/ClockAnalyticsPage.vue"
+import ClockDetailsPage from "../pages/ClockDetailsPage.vue"
 
 const routes = [
   {
@@ -13,20 +17,19 @@ const routes = [
   },
   {
     path: "/clocks/add",
-    component: () => import("../pages/AddClockPage.vue"),
+    component: AddClockPage,
   },
   {
     path: "/clocks/:id/update",
-    component: () => import("../pages/UpdateClockPage.vue"),
+    component: UpdateClockPage,
   },
   {
     path: "/clocks/:id/analytics",
-    component: () => import("../pages/ClockAnalyticsPage.vue"),
+    component: ClockAnalyticsPage,
   },
   {
     path: "/clocks/:id",
-    // lazy loading
-    component: () => import("../pages/ClockDetailsPage.vue"),
+    component: ClockDetailsPage,
   },
 ];
 

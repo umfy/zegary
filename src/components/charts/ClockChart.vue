@@ -30,8 +30,8 @@ const ctx = document.getElementById("clock-chart");
           {
             label: "Liczba dni",
             data: this.values,
-            backgroundColor: "rgba(54,73,93,.5)",
-            borderColor: "#36495d",
+            backgroundColor: "rgba(215,70,26,.5)",
+            borderColor: "#a82b00",
             borderWidth: 3,
           },
         ],
