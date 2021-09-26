@@ -1,31 +1,43 @@
 <template>
   <base-layout page-default-back-link="/clocks">
-    <base-dialog :show="removeClockDialogVisible" @close="switchClockDialog('removeClockDialogVisible')">
+    <base-dialog
+      :show="removeClockDialogVisible"
+      @close="switchClockDialog('removeClockDialogVisible')"
+    >
       <h2>Czy na pewno chcesz usunąć ten zegar?</h2>
       <template v-slot:actions>
         <ion-grid>
           <ion-row>
             <ion-col class="ion-text-center">
-              <ion-button color='secondary' @click="removeClock">Usuń</ion-button>
+              <ion-button color="secondary" @click="removeClock">Usuń</ion-button>
             </ion-col>
             <ion-col class="ion-text-center">
-              <ion-button color='secondary' @click="switchClockDialog('removeClockDialogVisible')">Cofnij</ion-button>
+              <ion-button
+                color="secondary"
+                @click="switchClockDialog('removeClockDialogVisible')"
+              >Cofnij</ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>
       </template>
     </base-dialog>
-    <base-dialog :show="startStopClockDialogVisible" @close="switchClockDialog('startStopClockDialogVisible')">
+    <base-dialog
+      :show="startStopClockDialogVisible"
+      @close="switchClockDialog('startStopClockDialogVisible')"
+    >
       <h2 v-if="clockIsRunning">Czy chcesz zatrzymać ten zegar?</h2>
       <h2 v-else>Czy chcesz uruchomić ten zegar?</h2>
       <template v-slot:actions>
         <ion-grid>
           <ion-row>
             <ion-col class="ion-text-center">
-              <ion-button color='secondary' @click="startStopClock">Tak</ion-button>
+              <ion-button color="secondary" @click="startStopClock">Tak</ion-button>
             </ion-col>
             <ion-col class="ion-text-center">
-              <ion-button color='secondary' @click="switchClockDialog('startStopClockDialogVisible')">Nie</ion-button>
+              <ion-button
+                color="secondary"
+                @click="switchClockDialog('startStopClockDialogVisible')"
+              >Nie</ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -36,16 +48,8 @@
         <ion-row>
           <ion-col class="ion-text-center">
             <ion-button @click="switchClockDialog('startStopClockDialogVisible')">
-              <ion-icon
-                v-if="clockIsRunning"
-                slot="icon-only"
-                :icon="stopCircleOutline"
-              ></ion-icon>
-              <ion-icon
-                v-else
-                slot="icon-only"
-                :icon="playCircleOutline"
-              ></ion-icon>
+              <ion-icon v-if="clockIsRunning" slot="icon-only" :icon="stopCircleOutline"></ion-icon>
+              <ion-icon v-else slot="icon-only" :icon="playCircleOutline"></ion-icon>
             </ion-button>
           </ion-col>
           <ion-col class="ion-text-center">
@@ -61,9 +65,7 @@
         </ion-row>
       </ion-grid>
     </template>
-    <h2 v-if="!loadedClock">
-      Nie odnaleziono zegara o takim id: {{ clockId }}
-    </h2>
+    <h2 v-if="!loadedClock">Nie odnaleziono zegara o takim id: {{ clockId }}</h2>
     <clock-overview
       v-else
       :title="loadedClock.title"
@@ -80,7 +82,7 @@ import {
   stopCircleOutline,
   playCircleOutline,
   trashOutline,
-  createOutline,
+  createOutline
 } from "ionicons/icons";
 import { IonButton, IonIcon, IonGrid, IonRow, IonCol } from "@ionic/vue";
 import BaseDialog from "../components/base/BaseDialog.vue";
@@ -93,7 +95,7 @@ export default {
     IonIcon,
     IonGrid,
     IonRow,
-    IonCol,
+    IonCol
   },
   data() {
     return {
@@ -106,18 +108,27 @@ export default {
       startStopClockDialogVisible: false
     };
   },
-  watch:{
-    $route(to){
+  watch: {
+    $route(to) {
       // This prevents displaying the same site when :id params change
       // https://router.vuejs.org/guide/essentials/dynamic-matching.html#reacting-to-params-changes
-      if(Object.keys(to.params).length){
-        this.clockId = this.$route.params.id
+      if (Object.keys(to.params).length) {
+        this.clockId = this.$route.params.id;
       }
     }
   },
   computed: {
     loadedClock() {
-      return this.$store.getters.clock(this.clockId);
+      let clock = this.$store.getters.clock(this.clockId);
+      if (clock == undefined) {
+        clock = {
+          title: "",
+          image: { data: "" },
+          history: [],
+          description: ""
+        };
+      }
+      return clock;
     },
     clockIsRunning() {
       if (
@@ -133,7 +144,7 @@ export default {
         return true;
       }
       return false;
-    },
+    }
   },
   methods: {
     removeClock() {
@@ -147,7 +158,7 @@ export default {
       this.$router.push(this.$route.path + "/update");
     },
     async startStopClock() {
-      this.startStopClockDialogVisible = false
+      this.startStopClockDialogVisible = false;
       // create new empty history with todays date at start
       if (
         this.loadedClock.history === undefined ||
@@ -157,8 +168,8 @@ export default {
           {
             id: new Date().toISOString(),
             start: new Date().toISOString(),
-            stop: "",
-          },
+            stop: ""
+          }
         ];
       } else if (
         this.loadedClock.history[0].start != "" &&
@@ -170,7 +181,7 @@ export default {
         this.loadedClock.history.unshift({
           id: new Date().toISOString(),
           start: new Date().toISOString(),
-          stop: "",
+          stop: ""
         });
       }
       await this.modifyClock(this.loadedClock);
@@ -178,7 +189,7 @@ export default {
     async modifyClock(clockData) {
       const clockDataWithId = { id: this.clockId, ...clockData };
       await this.$store.dispatch("modifyClock", clockDataWithId);
-    },
-  },
+    }
+  }
 };
 </script>

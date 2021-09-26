@@ -1,51 +1,57 @@
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
 
 const store = createStore({
   state() {
     return {
       clocks: [],
-    }
+      clocksDidLoad: false,
+    };
   },
   onMounted() {},
   getters: {
     clocks(state) {
-      return state.clocks
+      return state.clocks;
     },
     clock(state) {
       return (clockId) => {
-        return state.clocks.find((clock) => clock.id === clockId)
-      }
+        return state.clocks.find((clock) => clock.id === clockId);
+      };
     },
   },
   mutations: {
     addClock(state, newClock) {
-      state.clocks.unshift(newClock)
+      state.clocks.unshift(newClock);
     },
     setClocks(state, clocks) {
-      state.clocks = clocks
+      state.clocks = clocks;
+      state.clocksDidLoad = true;
     },
     removeClock(state, clockId) {
       state.clocks = state.clocks.filter((el) => {
-        return el.id != clockId
-      })
+        return el.id != clockId;
+      });
     },
     modifyClock(state, newClock) {
-      const foundIndex = state.clocks.findIndex((x) => x.id === newClock.id)
-      state.clocks[foundIndex] = newClock
+      const foundIndex = state.clocks.findIndex((x) => x.id === newClock.id);
+      state.clocks[foundIndex] = newClock;
     },
   },
   actions: {
     async addClock(context, clockData) {
-      if(clockData.image == null){
-        clockData['image'] = {filepath: '0000.jpg', webviewPath: "http://localhost/_capacitor_file_/data/user/0/com.rine.www/cache/JPEG_0000.jpg"}
+      if (clockData.image == null) {
+        clockData['image'] = {
+          filepath: '0000.jpg',
+          webviewPath:
+            'http://localhost/_capacitor_file_/data/user/0/com.rine.www/cache/JPEG_0000.jpg',
+        };
       }
       const newClock = {
         title: clockData.title,
         image: clockData.image,
         description: clockData.description,
         // history: [{id: ? date ?,  start: null, stop: null }],
-      }
-      console.log(newClock, 'newClock')
+      };
+      console.log(newClock, 'newClock');
       // backend here
       const response = await fetch(
         `https://zegary-33e82-default-rtdb.europe-west1.firebasedatabase.app/clocks/.json`,
@@ -53,15 +59,15 @@ const store = createStore({
           method: 'POST',
           body: JSON.stringify(newClock),
         }
-      )
+      );
       if (!response.ok) {
-        const error = new Error('Failed to submit data.')
-        throw error
+        const error = new Error('Failed to submit data.');
+        throw error;
       }
       // console.log('post response', response)
       // console.log('post response body', response.name)
       // ;(newClock['id'] = new Date().toISOString()),
-      context.commit('addClock', newClock)
+      context.commit('addClock', newClock);
     },
     async modifyClock(context, clockData) {
       let newClock = {
@@ -76,7 +82,7 @@ const store = createStore({
         //     stop: '2021-06-14',
         //   },
         // ],
-      }
+      };
       // console.log('clock data in modify clock:', clockData)
       const response = await fetch(
         `https://zegary-33e82-default-rtdb.europe-west1.firebasedatabase.app/clocks/${clockData.id}.json`,
@@ -84,14 +90,14 @@ const store = createStore({
           method: 'PUT',
           body: JSON.stringify(newClock),
         }
-      )
+      );
       if (!response.ok) {
-        const error = new Error('Failed to modify data.')
-        throw error
+        const error = new Error('Failed to modify data.');
+        throw error;
       }
 
-      newClock['id'] = clockData.id
-      context.commit('modifyClock', newClock)
+      newClock['id'] = clockData.id;
+      context.commit('modifyClock', newClock);
     },
     async removeClock(context, clockId) {
       const response = await fetch(
@@ -99,23 +105,23 @@ const store = createStore({
         {
           method: 'DELETE',
         }
-      )
+      );
       if (!response.ok) {
-        const error = new Error('Failed to remove data.')
-        throw error
+        const error = new Error('Failed to remove data.');
+        throw error;
       }
-      context.commit('removeClock', clockId)
+      context.commit('removeClock', clockId);
     },
     async loadClocks(context) {
       const response = await fetch(
         `https://zegary-33e82-default-rtdb.europe-west1.firebasedatabase.app/clocks.json`
-      )
-      const responseData = await response.json()
+      );
+      const responseData = await response.json();
       if (!response.ok) {
-        const error = new Error(responseData.message || 'Failed to Fetch!')
-        throw error
+        const error = new Error(responseData.message || 'Failed to Fetch!');
+        throw error;
       }
-      const clocks = []
+      const clocks = [];
       for (const key in responseData) {
         const clock = {
           id: key,
@@ -123,8 +129,8 @@ const store = createStore({
           description: responseData[key].description,
           image: responseData[key].image,
           history: responseData[key].history,
-        }
-        clocks.push(clock)
+        };
+        clocks.push(clock);
       }
 
       // for (let item of clocks){
@@ -136,9 +142,9 @@ const store = createStore({
       // clocks.sort((a, b) => a.history[0].start  > b.history[0].start )
 
       // console.log('clocks', clocks)
-      context.commit('setClocks', clocks)
+      context.commit('setClocks', clocks);
     },
   },
-})
+});
 
-export default store
+export default store;

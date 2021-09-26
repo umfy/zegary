@@ -11,20 +11,17 @@
       </ion-item>
       <ion-item>
         <!-- <ion-label position="floating">URL Obrazka</ion-label>
-        <ion-input type="text" v-model="enteredImageUrl"></ion-input> -->
+        <ion-input type="text" v-model="enteredImageUrl"></ion-input>-->
         <ion-thumbnail slot="start">
-          <img
-            :src="savedFileImage === null ? '' : savedFileImage.webviewPath"
-          />
+          <img :src="savedFileImage === null ? '' : savedFileImage.webviewPath" />
         </ion-thumbnail>
-        <ion-button type="button" color='tertiary' fill="clear" @click="takePhoto">
-          <ion-icon slot="start" :icon="camera"> </ion-icon>
-          Zrób zdjęcie
+        <ion-button type="button" color="tertiary" fill="clear" @click="takePhoto">
+          <ion-icon slot="start" :icon="camera"></ion-icon>Zrób zdjęcie
         </ion-button>
       </ion-item>
     </ion-list>
 
-    <ion-button class='margins' type="submit" color='secondary' expand="block">Zapisz</ion-button>
+    <ion-button class="margins" type="submit" color="secondary" expand="block">Zapisz</ion-button>
   </form>
 </template>
 
@@ -41,7 +38,7 @@ import {
 } from "@ionic/vue";
 import { camera } from "ionicons/icons";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
-import { Filesystem, Directory } from "@capacitor/filesystem";
+
 // import { Storage } from "@capacitor/storage";
 
 // PWA for desktop
@@ -64,6 +61,7 @@ export default {
       enteredTitle: "",
       enteredDescription: "",
       savedFileImage: null,
+      trueImage: null,
       camera
     };
   },
@@ -72,7 +70,7 @@ export default {
     submitForm() {
       const clockData = {
         title: this.enteredTitle,
-        image: this.savedFileImage,
+        image: this.trueImage,
         description: this.enteredDescription
       };
       this.$emit("save-clock", clockData);
@@ -82,7 +80,6 @@ export default {
         resultType: CameraResultType.Uri,
         source: CameraSource,
         quality: 100,
-        saveToGallery: true,
         correctOrientation: false
       });
 
@@ -98,18 +95,15 @@ export default {
       await this.savePicture(photo, fileName);
     },
     async savePicture(photo, fileName) {
+      let base64Data;
+
+      // Fetch the photo, read as a blob, then convert to base64 format
       const response = await fetch(photo.webPath);
       const blob = await response.blob();
-      const base64 = await this.convertBlobToBase64(blob);
+      base64Data = await this.convertBlobToBase64(blob);
+      // console.log('this must be string data: ', typeof base64Data);
 
-      console.log("blob", blob);
-      console.log("base64", base64);
-
-      await Filesystem.writeFile({
-        data: base64,
-        path: fileName,
-        directory: Directory.Data
-      });
+      this.trueImage = { filepath: fileName, data: base64Data };
     },
     async convertBlobToBase64(blob) {
       return new Promise((resolve, reject) => {
@@ -124,8 +118,7 @@ export default {
 </script>
 
 <style scoped>
-.margins{
+.margins {
   margin-top: 1rem;
-
 }
 </style>

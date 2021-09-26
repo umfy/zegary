@@ -1,10 +1,6 @@
 <template>
   <ion-list v-if="clocksHaveLoaded">
-    <clock-list-item
-      v-for="clock in clocks"
-      :key="clock.id"
-      :clock="clock"
-    ></clock-list-item>
+    <clock-list-item v-for="clock in clocks" :key="clock.id" :clock="clock"></clock-list-item>
   </ion-list>
   <h2 v-else>Ładowanie...</h2>
 </template>
@@ -31,6 +27,7 @@ export default {
   },
   methods: {
     async loadClocks() {
+      console.log("loading alllllll");
       try {
         await this.$store.dispatch("loadClocks");
       } catch (error) {

@@ -2,7 +2,7 @@
   <ion-item :router-link="`/clocks/${clock.id}`">
     <!-- <ion-item @click='routeToClock'> -->
     <ion-thumbnail slot="start">
-      <ion-img :src="clock.image.webviewPath" :alt="clock.title"></ion-img>
+      <ion-img :src="clock.image.data" :alt="clock.title"></ion-img>
     </ion-thumbnail>
     <ion-label>{{ clock.title }}</ion-label>
     <base-badge :title="countDays"></base-badge>
@@ -18,10 +18,10 @@ export default {
     IonItem,
     IonImg,
     IonThumbnail,
-    IonLabel,
+    IonLabel
   },
   props: {
-    clock: Object,
+    clock: Object
   },
   data() {
     return {};
@@ -45,7 +45,7 @@ export default {
       const startDate = new Date(this.clock.history[0].start);
       // parseInt was bad idea. It took numbers like 6^-10 and parsed it to 6 instead of 0
       return Math.floor((stopDate - startDate) / 86400000);
-    },
-  },
+    }
+  }
 };
 </script>
