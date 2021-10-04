@@ -27,7 +27,6 @@ export default {
   },
   methods: {
     async loadClocks() {
-      console.log("loading alllllll");
       try {
         await this.$store.dispatch("loadClocks");
       } catch (error) {

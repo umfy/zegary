@@ -50,6 +50,7 @@ import {
 } from "@ionic/vue";
 import { camera } from "ionicons/icons";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
+import resizebase64 from "../../composables/resizebase64";
 // import { Storage } from "@capacitor/storage";
 
 // PWA for desktop
@@ -156,22 +157,19 @@ export default {
       await this.savePicture(photo, fileName);
     },
     async savePicture(photo, fileName) {
-      let base64Data;
-      // Fetch the photo, read as a blob, then convert to base64 format
       const response = await fetch(photo.webPath);
       const blob = await response.blob();
-      base64Data = await this.convertBlobToBase64(blob);
-      // console.log('this must be string data: ', typeof base64Data);
 
-      this.trueImage = { filepath: fileName, data: base64Data };
-    },
-    async convertBlobToBase64(blob) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onerror = reject;
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
+      this.convertBlobToBase64(blob, base64Data => {
+        resizebase64(base64Data, 720, 1200, base64DataResized => {
+          this.trueImage = { filepath: fileName, data: base64DataResized };
+        });
       });
+    },
+    convertBlobToBase64(blob, callback) {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => callback(reader.result);
     }
   }
 };

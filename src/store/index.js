@@ -41,8 +41,7 @@ const store = createStore({
       if (clockData.image == null) {
         clockData['image'] = {
           filepath: '0000.jpg',
-          webviewPath:
-            'http://localhost/_capacitor_file_/data/user/0/com.rine.www/cache/JPEG_0000.jpg',
+          data: '',
         };
       }
       const newClock = {
